@@ -1,0 +1,130 @@
+.row.content {height: 1500px}
+.sidenav {
+  background-color: #f1f1f1;
+  height: 100%;
+}
+footer {
+  background-color: #555;
+  color: white;
+  padding: 15px;
+}
+table {
+  font-family: sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+table tr th{
+  font-weight: normal;
+  padding: 8px 20px;
+}
+table, th, td {
+  padding: 8px 20px;
+  text-align: center;
+}
+input[type=number],[type=text],[type=password],[type=email],[type=url] {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+.btn {
+	box-sizing: border-box !important;
+	-webkit-appearance: none!important;
+	-moz-appearance: none!important;
+	appearance: none!important; 
+	background-color: transparent!important;
+	border: 2px solid #e74c3c!important;
+	border-radius: 0.6em!important;
+	color: #e74c3c!important;
+	cursor: pointer!important;
+	align-self: center!important;
+	font-size: 1rem!important;
+	font-weight: 400!important;
+	line-height: 1!important;
+	padding: 1.2em 2.8em!important;
+	text-decoration: none!important;
+	text-align: center!important;
+	text-transform: uppercase!important;
+	font-family: 'Montserrat', sans-serif!important;
+	font-weight: 700!important;
+}
+.btn:hover, .btn:focus {
+	color: #fff!important;
+	outline: 0!important;
+}
+.first {
+	transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out!important;
+}
+.first:hover {
+	box-shadow: 0 0 40px 40px #e74c3c inset!important;
+}
+.container {
+  display: block!important;
+  position: relative!important;
+  padding-left: 35px!important;
+  margin-bottom: 12px!important;
+  cursor: pointer!important;
+  font-size: 15px!important;
+  -webkit-user-select: none!important;
+  -moz-user-select: none!important;
+  -ms-user-select: none!important;
+  user-select: none!important;
+}
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+select {
+  width: 20%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+}
+textarea {
+  width: 70%;
+  padding: 5px 5px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+@media screen and (max-width: 767px) {
+  .sidenav {
+	height: auto;
+	padding: 15px;
+  }
+  .row.content {height: auto;}
+}
