@@ -1,8 +1,12 @@
 <?php
-	include('../global-validation/security-crud.php');
-	$id		= mysqli_real_escape_string($connect, $_GET['id']);
+declare(strict_types=1);
 
-  	$query = "DELETE FROM scrim_info WHERE id='$id'";
-  	mysqli_query($connect,$query);
-  	echo '<script>alert("Data Deleted Successfully!");window.history.back();</script>';
-?>
+require __DIR__ . '/../app/bootstrap.php';
+require_post();
+require_admin();
+
+$id = input_int('id');
+if ($id !== null) {
+    db_query('DELETE FROM scrim_info WHERE id = ?', [$id]);
+}
+flash_back('Data Deleted Successfully!', 'en-us/dashboard/admin/scrim-info.php');

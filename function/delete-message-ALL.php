@@ -1,18 +1,15 @@
 <?php
-	include('../global-validation/security-crud.php');
-	$code = mysqli_real_escape_string($connect, $_POST['code']);
-	$sql = "TRUNCATE TABLE message";
+declare(strict_types=1);
 
-	if ($code == 'CONFIRM') {
-	  if ($connect->query($sql) === TRUE) {
-		echo '<script>alert("Record Deleted Successfully!");window.history.back();</script>';
-	  }
-	  else {
-	    echo '<script>alert("Error, cannot delete the record. Please try again!");window.history.back();</script>';
-	  }
-	}else {
-	  echo '<script>alert("Confirmation Code Mismatch");window.history.back();</script>';
-	}
+require __DIR__ . '/../app/bootstrap.php';
+require_post();
+require_admin();
 
-	$connect->close();
-?>
+$back = 'en-us/dashboard/admin/message.php';
+
+if (input('code') !== 'CONFIRM') {
+    flash_back('Confirmation Code Mismatch', $back);
+}
+
+db_query('DELETE FROM message'); // SQLite has no TRUNCATE
+flash_back('Record Deleted Successfully!', $back);

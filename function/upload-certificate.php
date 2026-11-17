@@ -1,32 +1,28 @@
 <?php
-include '../global-validation/config.php';
+declare(strict_types=1);
 
-$targetDir = "../assets/img/";
-$fileName = basename($_FILES["file"]["name"]);
-$fileSize = basename($_FILES["file"]["size"]);
-$targetFilePath = $targetDir . $fileName;
-$fileType = pathinfo($targetFilePath,PATHINFO_EXTENSION);
+/*
+ * Gallery photo upload. In 2020 this endpoint had no authentication at all and
+ * kept the client's file name inside the web root; it is now admin-only and
+ * goes through the hardened upload pipeline (see app/uploads.php).
+ */
 
-if(!empty($_FILES["file"]["name"])){
-	if (($fileSize > 2097150)){
-			echo '<script>alert("File size too large. Please try again file size under 2 mb");window.history.back();</script>';
-	}else {
-		$allowTypes = array('jpg','jpeg','png');
-		if(in_array($fileType, $allowTypes)){
-			if(move_uploaded_file($_FILES["file"]["tmp_name"], $targetFilePath)){
-				$insert = $connect->query("INSERT into gallery (file_name, uploaded_on) VALUES ('".$fileName."', NOW())");
-				if($insert){
-					echo '<script>alert("Photo Uploaded Successfully.");window.history.back();</script>';
-				}else{
-				   echo '<script>alert("File Upload Failed, please try again");window.history.back();</script>';
-				}
-			}else{
-				echo '<script>alert("Sorry, there was an error uploading the files.");window.history.back();</script>';
-			}
-		}else{
-			echo '<script>alert("Only photo with extension JPEG, JPG, and PNG allowed.");window.history.back();</script>';
-		}}
-}else{
-    echo '<script>alert("Please choose a file to be uploaded");window.history.back();</script>';
+require __DIR__ . '/../app/bootstrap.php';
+require_post();
+require_admin();
+
+$back = 'en-us/dashboard/admin/edit-gallery.php';
+
+try {
+    $name = store_image_upload('file', 'gallery', 2 * 1024 * 1024);
+} catch (UploadError $e) {
+    flash_back($e->getMessage(), $back);
 }
-?>
+
+try {
+    db_query('INSERT INTO gallery (file_name, uploaded_on) VALUES (?, ?)', [$name, now_string()]);
+} catch (Throwable $e) {
+    delete_upload('gallery', $name); // do not leave an orphaned file behind
+    throw $e;
+}
+flash_back('Photo Uploaded Successfully.', $back);

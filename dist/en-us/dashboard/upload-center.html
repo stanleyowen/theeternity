@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Eternity Esports | Upload Center</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/assets/css/dashboard-style.css?v=2026.11">
+  <link rel="stylesheet" href="/assets/vendor/bootstrap3/css/bootstrap.min.css?v=2026.11">
+  <link rel="stylesheet" href="/assets/css/dashboard-extra.css?v=2026.11">
+  <link rel="icon" href="/assets/img/etr-img-1.jpeg?v=2026.11">
+</head>
+
+<body data-static-archive="This website is archived (read-only). Submissions and changes are disabled.">
+	<div class="container-fluid">
+	  <div class="row content">
+		<div class="col-sm-3 sidenav">
+		  <h4>Welcome Back : Demo Squad</h4>
+		  <h4><font color="green">Online</font></h4>
+		  <div class="alert alert-warning archive-note"><span class="label label-danger">Archived</span> You are exploring an archived demo. Everything is visible, but changes are disabled.</div>
+		  <br>
+		  <h4>Menus :</h4>
+		  <ul class="nav nav-pills nav-stacked">
+			<li><a href="/en-us/">Home</a></li>
+			<li><a href="/en-us/dashboard/">DashBoard</a></li>
+			<li><a href="/en-us/dashboard/participate-scrim.html">1. Participate in a Scrim</a></li>
+			<li><a href="/en-us/dashboard/join-group.html">2. Join WhatsApp Group</a></li>
+			<li class="active"><a href="/en-us/dashboard/upload-center.html">3. Upload Center</a></li>
+			<li><a href="/en-us/dashboard/attendance.html">4. Attendance</a></li>
+			<li><a href="/en-us/dashboard/submit-result.html">5. Submit Result</a></li>
+			<li><a href="/en-us/dashboard/certificate.html">6. Download Certificates</a></li>
+			<li><a href="/en-us/dashboard/support.html">Customer Service</a></li>
+			<li><a href="/en-us/">Logout</a></li>
+		  </ul>
+		</div>
+
+		<div class="col-sm-9">
+		  <h2>How to Upload a Picture</h2>
+		  <h5><span class="glyphicon glyphicon-time"></span> Posted by Admin.</h5>
+		  <h5><span class="label label-danger">Welcome</span></h5><br>
+		  <font color="red">Procedure :</font><br>
+		  <ol>
+			<li>Player needs 3 photos to be uploaded, which is :
+				<ul type="disc">
+					<li>1 Squad Logo with the format SquadName</li>
+					<li>2 SS Instagram Proof format SquadName_IG_(1/2)</li>
+				</ul>
+			</li>
+			<li>Upload the photo according to the uploaded place</li>
+			<li>Make sure your file name [LENGTH] doesn't longer than 50 characters [&lt;50 chars]</li>
+			<li>Make sure your file is under 500kB</li>
+			<li>Only file with extension JPEG, JPG, and PNG are allowed</li>
+			<li>Once file was uploaded successfully, file name will be displayed in the table.</li>
+			<li>Each User can only upload ONCE per place</li>
+			<li>User who upload more than ONCE will be ELIMINATED</li>
+			<li>If something went wrong, contact our Admin to get support</li>
+		  </ol>
+
+		  <table class="data-table" border=1>
+			<caption class="title">Upload Status</caption>
+			<thead>
+				<tr>
+					<th>Squad Logo</th>
+					<th>IG Proof (1)</th>
+					<th>IG Proof (2)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>9a43ec2efd0d4fe09abe49d2f697f072.jpg</td>
+					<td>-</td>
+					<td>-</td>
+				</tr>
+			</tbody>
+		  </table>
+
+		  <h4><small><font color="red">UPLOAD SQUAD IMAGE [ONCE][not larger than 500 kB]:</font></small></h4>
+		  <form action="/function/upload-squad-picture.php" method="post" enctype="multipart/form-data">
+						<input type="file" name="file" accept="image/jpeg,image/png" required>
+			<button class="btn first" type="submit" name="submit">Upload</button>
+		  </form>
+
+		  <h4><small><font color="red">UPLOAD INSTAGRAM PROOF 1 [ONCE][not larger than 500 kB]:</font></small></h4>
+		  <form action="/function/upload-instagram-picture.php" method="post" enctype="multipart/form-data">
+						<input type="file" name="file" accept="image/jpeg,image/png" required>
+			<button class="btn first" type="submit" name="submit">Upload</button>
+		  </form>
+
+		  <h4><small><font color="red">UPLOAD INSTAGRAM PROOF 2 [ONCE][not larger than 500 kB]:</font></small></h4>
+		  <form action="/function/upload-instagram-picture-2.php" method="post" enctype="multipart/form-data">
+						<input type="file" name="file" accept="image/jpeg,image/png" required>
+			<button class="btn first" type="submit" name="submit">Upload</button>
+		  </form>
+		</div>
+	  </div>
+	</div>
+
+	<footer class="footer text-faded text-center py-0">
+    <div class="container">
+      <p class="m-0 small">Copyright &copy; 2020 Eternity Esports | Designed by <a href="https://github.com/stanleyowen" target="_blank" rel="noopener noreferrer">Stanley Owen</a></p>
+    </div>
+  </footer>
+
+  <script src="/assets/vendor/jquery/jquery.min.js?v=2026.11"></script>
+  <script src="/assets/vendor/bootstrap3/js/bootstrap.min.js?v=2026.11"></script>
+  <script src="/assets/js/app.js?v=2026.11"></script>
+</body>
+</html>

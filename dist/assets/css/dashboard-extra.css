@@ -1,0 +1,38 @@
+/* Additions for the 2026 archive edition — kept separate from the original stylesheets. */
+
+/* Delete / ban buttons are now small POST forms instead of GET links. */
+.inline-form {
+  display: inline-block;
+  margin: 0 2px 4px 0;
+}
+
+/* Archive notice in the dashboard sidebar. */
+.archive-note {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.archive-note .label {
+  display: inline-block;
+  margin-bottom: 4px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Tables with long URLs / descriptions must not break the layout on phones. */
+.data-table td {
+  word-break: break-word;
+}
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Uploaded proofs on the admin "View" page. */
+.upload-preview {
+  max-width: 100%;
+  max-height: 420px;
+  margin: 6px 0 14px;
+  border: 1px solid #ddd;
+}

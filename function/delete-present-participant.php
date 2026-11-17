@@ -1,8 +1,12 @@
 <?php
-	include('../global-validation/security-crud.php');
-	$name	= mysqli_real_escape_string($connect, $_GET['name']);
+declare(strict_types=1);
 
-  	$query = "DELETE FROM present_participant WHERE name='$name'";
-  	mysqli_query($connect,$query);
-  	echo '<script>alert("Data Deleted Successfully!");window.history.back();</script>';
-?>
+require __DIR__ . '/../app/bootstrap.php';
+require_post();
+require_admin();
+
+$name = input('name');
+if ($name !== '') {
+    db_query('DELETE FROM present_participant WHERE name = ?', [$name]);
+}
+flash_back('Data Deleted Successfully!', 'en-us/dashboard/admin/present-participant.php');

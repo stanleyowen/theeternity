@@ -1,24 +1,14 @@
 <?php
-	include('config.php');
-	
-	$lang	= mysqli_real_escape_string($connect, $_GET['lang']);
+declare(strict_types=1);
 
-	if(isset($_SESSION['username']) && isset($_SESSION['role'])){
-		if($lang == "en"){
-			header('Location:../en-us/dashboard/participate-scrim.php');
-		}else if($lang == "id"){
-			header('Location:../id/dashboard/participate-scrim.php');
-		}
-	}else if(isset($_COOKIE['sessionid-1']) && isset($_COOKIE['sessionid-2']) && isset($_COOKIE['sessionid-3'])){
-		if($lang == "en"){
-			header('Location:../en-us/dashboard/participate-scrim.php');
-		}else if($lang == "id"){
-			header('Location:../id/dashboard/participate-scrim.php');
-		}
-	}else {
-		if($lang == "en"){
-			header('Location:../en-us/login/');
-		}else if($lang == "id"){
-			header('Location:../id/login/');
-		}
-	}
+require __DIR__ . '/../app/bootstrap.php';
+
+// "Join Scrim" button: signed-in players go to the scrim sign-up page, everyone else to login.
+$lang = ($_GET['lang'] ?? '') === 'id' ? 'id' : 'en';
+set_lang($lang);
+
+$user = current_user();
+if ($user === null) {
+    redirect(login_url($lang));
+}
+redirect($user['role'] === ROLE_ADMIN ? dashboard_path($user, $lang) : lang_dir($lang) . '/dashboard/participate-scrim.php');

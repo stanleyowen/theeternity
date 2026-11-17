@@ -1,0 +1,5 @@
+# The site is published as pre-rendered static files; Netlify runs no PHP.
+# Regenerate dist/ with tools/export-static.sh (needs Docker), then commit and push.
+[build]
+  publish = "dist"
+  command = ""

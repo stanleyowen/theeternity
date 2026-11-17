@@ -1,65 +1,15 @@
 <?php
-	session_start();
-	include('../../global-validation/config.php');
-	$query = "SELECT * FROM scrim_info";
-	$results = mysqli_query($connect, $query);
-	$alert = "SELECT * FROM alerts_info";
-	$result_alert = mysqli_query($connect,$alert);
+declare(strict_types=1);
+
+require __DIR__ . '/../../app/bootstrap.php';
+set_lang('id');
+
+public_header('Info', [
+    'css'    => ['dashboard-style.css'],
+    'topbar' => false,
+]);
+public_nav('event');
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Eternity Esports | Info</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="short icon" href="../../assets/img/etr-img-1.jpeg">
-  <link rel="stylesheet" href="../../assets/css/dashboard-style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"/>
-  <link rel="stylesheet" href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../../assets/css/style.css"/>
-  <link rel="stylesheet" href="../../assets/css/button.css"/>
-</head>
-
-<body oncontextmenu = "return false">
-	<?php foreach ($result_alert as $row) {
-	  echo'
-	  <div class="alert alert-'.$row['type'].'">
-		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		'.$row['description'].'
-		<a href="'.$row['link'].'">Click here <i class="fa fa-external-link"></i></a>
-	  </div>';
-    }
-  ?>
-  
-  <nav class="navbar navbar-expand-lg navbar-dark py-lg-4" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="#">Menu</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav mx-auto">
-          <li class="nav-item px-lg-4">
-            <a class="nav-link text-uppercase text-expanded" href="../index.php">Beranda</a>
-          </li>
-          <li class="nav-item active px-lg-4">
-            <a class="nav-link text-uppercase text-expanded" href="../event.php">Info</a>
-            <span class="sr-only">(current)</span>
-          </li>
-          <li class="nav-item px-lg-4">
-            <a class="nav-link text-uppercase text-expanded" href="../gallery.php">Galeri</a>
-          </li>
-          <li class="nav-item px-lg-4">
-            <a class="nav-link text-uppercase text-expanded" href="../contact-us.php">Hubungi Kami</a>
-          </li>
-          <?php include('../../global-validation/transform-menu-id-event.php'); ?>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
   <section class="page-section clearfix">
     <div class="container">
 		<div class="intro-text left-0 bg-faded p-5 rounded">
@@ -69,6 +19,21 @@
 		  <p>
 			Diposting oleh : <font color="red">Admin</font><br>
 			Diposting pada : <font color="red"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-09-08 07:39:53</font><br><br>
+			<center><b id="archive-edition">Eternity v1.0 &mdash; Edisi Arsip (2026)</b></center>
+			<br>
+			<p>Eternity Esports tidak lagi mengadakan scrim. Situs ini dipulihkan sebagai arsip baca-saja agar proyek ini tetap dapat dilihat, dan kodenya dibangun ulang dengan standar keamanan modern tanpa mengubah desain asli tahun 2020.</p>
+			<ol>
+				<li>Mode arsip: situs bersifat baca-saja, dan pendaftaran, scrim, serta pesan telah ditutup. Pengunjung tetap dapat menjelajahi dashboard Pemain dan Administrator melalui akses demo di halaman Masuk.
+				<li>Dibangun ulang dengan PHP 8 dan prepared statement untuk setiap query database (perlindungan dari SQL injection)
+				<li>Kata sandi di-hash dengan bcrypt, dan proses masuk hanya menggunakan cookie sesi yang aman. Kredensial tidak pernah disimpan di cookie.
+				<li>Peran pengguna diverifikasi di server untuk setiap halaman dan aksi. Akses Administrator tidak dapat lagi dipilih dari formulir masuk.
+				<li>Semua konten pengguna di-escape (perlindungan dari XSS), dan setiap halaman dilindungi Content Security Policy yang ketat
+				<li>Perlindungan CSRF di setiap formulir. Aksi hapus memerlukan permintaan POST dengan konfirmasi.
+				<li>Foto yang diunggah diverifikasi sebagai gambar asli, diganti namanya, di-encode ulang, dan disimpan secara privat
+				<li>Pesan dienkripsi dengan AES-256-GCM terautentikasi. Masuk, pendaftaran, dan pesan dibatasi lajunya di server.
+				<li>Diperbarui ke Bootstrap 4.6.2 / 3.4.1, jQuery 3.7.1, dan Font Awesome 4.7, semuanya disajikan secara lokal
+			</ol>
+			<br>
 			<center><b>Eternity v0.11</b></center>
 			<br>
 			<ol>
@@ -138,32 +103,4 @@
     </div>
   </section>
 
-  <footer class="footer text-faded text-center py-3 fixed-bottom">
-    <div class="container">
-      <p class="m-0 small">Copyright &copy; 2020 Eternity Esports | Designed by <a href="https://instagram.com/stanley_owenn/">Stanley Owen</a></p>
-    </div>
-  </footer>
-  
-  <div class="button" title="Contact Us">
-    <a href="https://wa.me/message/SGOS5RUB46CUA1" class="hvr-float-shadow">
-  	  <img src="../../assets/img/whatsapp-logo.png" width="60">
-    </a>
-  </div>
-
-  <div class="button1" title="Follow Us On">
-    <a href="https://instagram.com/eternity_esports.id" class="hvr-float-shadow1">
-	  <img src="../../assets/img/instagram-logo.webp" width="60">
-    </a>
-  </div>
-
-  <div class="button2" title="Mail Us">
-    <a href="mailto:theeternity.esports.id@gmail.com" class="hvr-float-shadow2">
-	  <img src="../../assets/img/gmail-logo.png" width="60">
-    </a>
-  </div>
-  
-  <script src="../../assets/vendor/jquery/jquery.min.js"></script>
-  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+<?php public_footer();

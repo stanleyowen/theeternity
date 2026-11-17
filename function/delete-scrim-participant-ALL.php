@@ -1,18 +1,21 @@
 <?php
-	include('../global-validation/security-crud.php');
-	$code = mysqli_real_escape_string($connect, $_POST['code']);
-	$sql = "TRUNCATE TABLE scrim_member";
+declare(strict_types=1);
 
-	if ($code == 'CONFIRM') {
-	  if ($connect->query($sql) === TRUE) {
-		echo '<script>alert("Record Deleted Successfully!");window.history.back();</script>';
-	  }
-	  else {
-	    echo '<script>alert("Error, cannot delete the record. Please try again!");window.history.back();</script>';
-	  }
-	}else {
-	  echo '<script>alert("Confirmation Code Mismatch");window.history.back();</script>';
-	}
+require __DIR__ . '/../app/bootstrap.php';
+require_post();
+require_admin();
 
-	$connect->close();
-?>
+$back = 'en-us/dashboard/admin/user-upload.php';
+if (input('code') !== 'CONFIRM') {
+    flash_back('Confirmation Code Mismatch', $back);
+}
+
+$members = db_all('SELECT squad_pic, ig_proof, ig_proof_2 FROM scrim_member');
+db_query('DELETE FROM scrim_member');
+// Files are removed after the rows, so a failed DELETE never leaves rows pointing at missing files.
+foreach ($members as $m) {
+    delete_upload('logo-squad', $m['squad_pic']);
+    delete_upload('ig-proof', $m['ig_proof']);
+    delete_upload('ig-proof-2', $m['ig_proof_2']);
+}
+flash_back('Record Deleted Successfully!', $back);

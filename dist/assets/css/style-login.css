@@ -1,0 +1,35 @@
+.comment {
+	float: left;
+	width: 100%;
+	height: auto;
+}
+.textinput {
+	float: left;
+	width: 100%;
+	padding: 12px 20px;
+  margin: 8px 0;
+	min-height: 200px;
+	outline: none;
+	resize: none;
+	border: 1px solid grey;
+}
+input[type=text], input[type=password], input[type=email], input[type=number]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+.submit {
+  background-color: black;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+.submit:hover {
+  opacity: 0.8;
+}

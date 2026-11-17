@@ -1,28 +1,30 @@
 <?php
-	include('../global-validation/security-crud.php');
-	date_default_timezone_set('Asia/Jakarta');
-	
-    $header    		= enter(mysqli_real_escape_string($connect, $_POST['header']));
-    $code   		= mysqli_real_escape_string($connect, $_POST['code']);
-    $description    = enter(mysqli_real_escape_string($connect, $_POST['description']));
-    $date		    = date("Y-m-d H:i:s");
+declare(strict_types=1);
 
-	if(isset($_COOKIE['sessionid-1'])){
-		$name = $_COOKIE['sessionid-1'];
-	}
+require __DIR__ . '/../app/bootstrap.php';
+require_post();
+$user = require_admin();
 
-    if (!empty($code)){
-    	$type	= "hidden";
-    }else {
-    	$code	= 0;
-    	$type	= "public";
-    }
-    
-	if(!empty($header) && !empty($description)) {
-		$query = "INSERT INTO scrim_info(type,code,posted_by,date,header,description) VALUES('$type','$code','$name','$date','$header','$description');";
-		mysqli_query($connect, $query);
-		echo '<script>alert("Scrim Info Created Successfully");window.history.back(2);</script>';
-	}else{
-		echo '<script>alert("All of the form must be filled!");</script>';
-	}
-?>
+$back        = 'en-us/dashboard/admin/scrim-info.php';
+$header      = input('header');
+$code        = input('code');
+$description = input('description');
+
+if ($header === '' || $description === '') {
+    flash_back('All of the form must be filled!', $back);
+}
+if (mb_strlen($header) > 255 || mb_strlen($description) > 5000) {
+    flash_back('Header can be max 255 characters and Description max 5000 characters.', $back);
+}
+if ($code !== '' && !preg_match('/^[A-Za-z0-9]{1,20}$/', $code)) {
+    flash_back('Code may only contain letters and numbers (max 20 characters).', $back);
+}
+
+// A code makes the post hidden (only visible to players who enter it).
+$type = $code !== '' ? 'hidden' : 'public';
+
+db_query(
+    'INSERT INTO scrim_info (type, code, posted_by, date, header, description) VALUES (?, ?, ?, ?, ?, ?)',
+    [$type, $code !== '' ? $code : null, $user['username'], now_string(), $header, $description]
+);
+flash_back('Scrim Info Created Successfully', $back);
