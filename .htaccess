@@ -8,7 +8,7 @@ DirectoryIndex index.php
     RewriteRule (^|/)\. - [R=404,L]
 </IfModule>
 
-<FilesMatch "\.(sql|sqlite|md|sh|ini|lock|example|yml|yaml|log)$">
+<FilesMatch "^\.|\.(sql|sqlite|md|sh|ini|lock|example|yml|yaml|log)$">
     Require all denied
 </FilesMatch>
 

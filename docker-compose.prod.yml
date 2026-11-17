@@ -1,0 +1,38 @@
+# Production on a single server (e.g. Ubuntu) with automatic HTTPS via Caddy.
+#   DOMAIN=eternity.example.com docker compose -f docker-compose.prod.yml up -d --build
+# Point the domain's DNS A/AAAA record at the server and open ports 80 + 443 first.
+services:
+  web:
+    build: .
+    environment:
+      APP_ENV: production
+      ARCHIVE_MODE: "true"
+      TRUST_PROXY: "true"
+    expose:
+      - "80"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/apache2
+      - /var/lock/apache2
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    depends_on:
+      - web
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN, e.g. DOMAIN=eternity.example.com}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

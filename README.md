@@ -75,10 +75,27 @@ The image (PHP 8.5 + Apache) bakes the read-only archive database in at build ti
 filesystem, so it can be deployed as-is to any container host (Render, Fly.io, Railway, Cloud Run…). `$PORT` is
 respected.
 
+### Deploy on your own server (Ubuntu)
+
+One container serves the site and [Caddy](https://caddyserver.com) handles HTTPS certificates automatically:
+
+```bash
+# on the server (Docker Engine + compose plugin installed)
+git clone https://github.com/stanleyowen/theeternity.git && cd theeternity
+# point your domain's DNS A record at the server, allow ports 80 and 443 (e.g. `ufw allow 80,443/tcp`)
+DOMAIN=eternity.example.com docker compose -f docker-compose.prod.yml up -d --build
+```
+
+Updating later: `git pull && DOMAIN=eternity.example.com docker compose -f docker-compose.prod.yml up -d --build`.
+
+**Why not Netlify / Vercel / GitHub Pages?** They host static files and serverless JavaScript functions, and have no
+PHP runtime. This site needs PHP for its sessions, the demo dashboards and the database. Any host that runs a Docker
+container works: your own VPS, Render, Fly.io, Railway, Google Cloud Run.
+
 ### Live (writable) mode
 
 ```bash
-cp .env.example .env    # set ARCHIVE_MODE=false and an APP_KEY
+cp .env.example .env    # set ARCHIVE_MODE=false and an APP_KEY (required in live mode)
 docker build -t eternity .
 docker run -p 8080:80 --env-file .env -v eternity-data:/var/www/html/storage eternity
 docker exec -it <container> php bin/create-admin.php "Your Admin Name"
