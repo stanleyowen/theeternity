@@ -1,19 +1,14 @@
 <?php
-include('../global-validation/security-crud.php');
-$code = mysqli_real_escape_string($connect, $_POST['code']);
-$sql = "TRUNCATE TABLE present_participant";
+declare(strict_types=1);
 
-if ($code == 'CONFIRM') {
-  if ($connect->query($sql) === TRUE) {
-	echo '<script>alert("Record Deleted Successfully!");window.history.back();</script>';
-  }
-  else {
-    echo '<script>alert("Error, cannot delete the record. Please try again!");document.location="../dashboard/admin/present-participant.php"</script>';
-  }
-}else {
-  echo '<script>alert("Confirmation Code Mismatch");window.history.back();</script>';
+require __DIR__ . '/../app/bootstrap.php';
+require_post();
+require_admin();
+
+$back = 'en-us/dashboard/admin/present-participant.php';
+if (input('code') !== 'CONFIRM') {
+    flash_back('Confirmation Code Mismatch', $back);
 }
 
-
-$connect->close();
-?>
+db_query('DELETE FROM present_participant');
+flash_back('Record Deleted Successfully!', $back);

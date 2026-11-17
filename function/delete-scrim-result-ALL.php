@@ -1,12 +1,15 @@
 <?php
-	include('../global-validation/security-crud.php');
-	$code = mysqli_real_escape_string($connect, $_POST['code']);
+declare(strict_types=1);
 
-	if ($code == 'CONFIRM') {
-	  $query = "TRUNCATE TABLE scrim_member";
-	  mysqli_query($connect, $query);
-	  echo '<script>alert("Data Deleted Successfully");window.history.back();</script>';
-	}else{
-		echo '<script>alert("Confirmation CODE Mismatch");window.history.back();</script>';
-	}
-?>
+require __DIR__ . '/../app/bootstrap.php';
+require_post();
+require_admin();
+
+$back = 'en-us/dashboard/admin/scrim-result.php';
+if (input('code') !== 'CONFIRM') {
+    flash_back('Confirmation Code Mismatch', $back);
+}
+
+// Clears every result but keeps the participants (the 2020 handler wiped scrim_member entirely).
+db_query('UPDATE scrim_member SET rank_1 = NULL, kill_1 = NULL, rank_2 = NULL, kill_2 = NULL');
+flash_back('Data Deleted Successfully', $back);

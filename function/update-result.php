@@ -1,15 +1,22 @@
 <?php
-	include('../global-validation/security-crud.php');
+declare(strict_types=1);
 
-	$username		= mysqli_real_escape_string($connect, $_POST['username']);
-    $rank			= mysqli_real_escape_string($connect, $_POST['rank']);
-    $kill			= mysqli_real_escape_string($connect, $_POST['kill']);
+require __DIR__ . '/../app/bootstrap.php';
+require_post();
+require_admin();
 
-	if(!empty($username) && !empty($rank) && !empty($kill)){
-		$query = "UPDATE scrim_member SET rank_1='$rank',kill_1='$kill' WHERE username='$username'";
-		mysqli_query($connect, $query);
-		echo '<script>alert("Data Updated Successfully");window.history.back();</script>';
-	}else{
-		echo '<script>alert("All of the form must be filled.")</script>';
-	}
-?>
+$back     = 'en-us/dashboard/admin/scrim-result.php';
+$username = input('username');
+$rank     = input_int('rank');
+$kill     = input_int('kill');
+
+if ($username === '' || $rank === null || $rank < 1 || $rank > 100 || $kill === null || $kill < 0 || $kill > 99) {
+    flash_back('All of the form must be filled (rank 1-100, total kill 0-99).', $back);
+}
+if (db_value('SELECT 1 FROM scrim_member WHERE username = ?', [$username]) === null) {
+    flash_back('Participant not found', $back);
+}
+
+db_query('UPDATE scrim_member SET rank_1 = ?, kill_1 = ? WHERE username = ?', [$rank, $kill, $username]);
+flash('Data Updated Successfully');
+redirect($back);
