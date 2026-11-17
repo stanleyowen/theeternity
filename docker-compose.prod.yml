@@ -1,15 +1,24 @@
-# Production on a single server (e.g. Ubuntu) with automatic HTTPS via Caddy.
-#   DOMAIN=eternity.example.com docker compose -f docker-compose.prod.yml up -d --build
-# Point the domain's DNS A/AAAA record at the server and open ports 80 + 443 first.
+# Production on your own server behind a Cloudflare Tunnel (no inbound ports opened).
+#
+# Option A, cloudflared already installed on the host:
+#   docker compose -f docker-compose.prod.yml up -d --build
+#   Tunnel public hostname -> service  http://localhost:8080
+#
+# Option B, run cloudflared in Docker too (remotely-managed tunnel token from the Zero Trust dashboard):
+#   TUNNEL_TOKEN=xxxx docker compose -f docker-compose.prod.yml --profile tunnel up -d --build
+#   Tunnel public hostname -> service  http://web:80
 services:
   web:
     build: .
     environment:
       APP_ENV: production
       ARCHIVE_MODE: "true"
+      # The app is only reachable through the tunnel, so Cloudflare's
+      # CF-Connecting-IP / X-Forwarded-Proto headers can be trusted.
       TRUST_PROXY: "true"
-    expose:
-      - "80"
+    ports:
+      # Localhost only. Docker bypasses ufw for published ports, so never bind 0.0.0.0 here.
+      - "127.0.0.1:8080:80"
     read_only: true
     tmpfs:
       - /tmp
@@ -17,22 +26,12 @@ services:
       - /var/lock/apache2
     restart: unless-stopped
 
-  caddy:
-    image: caddy:2
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: ["tunnel"]
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
     depends_on:
       - web
-    environment:
-      DOMAIN: ${DOMAIN:?Set DOMAIN, e.g. DOMAIN=eternity.example.com}
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
     restart: unless-stopped
-
-volumes:
-  caddy_data:
-  caddy_config:

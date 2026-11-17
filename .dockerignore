@@ -9,5 +9,4 @@ storage/.app_key
 docker-compose.yml
 *.md
 docker-compose.prod.yml
-deploy
 tests

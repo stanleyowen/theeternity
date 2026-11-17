@@ -77,9 +77,19 @@ function input_int(string $key, ?array $source = null): ?int
 
 function client_ip(): string
 {
-    // Behind a trusted reverse proxy (e.g. Caddy), the real client is the last
-    // address the proxy appended to X-Forwarded-For; earlier entries are client-controlled.
-    if (Config::trustProxy() && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    // Only when TRUST_PROXY is on, i.e. the app is reachable solely through the proxy
+    // (otherwise anyone could forge these headers).
+    if (!Config::trustProxy()) {
+        return (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+    }
+    // Cloudflare (incl. Cloudflare Tunnel) sets the visitor's address here.
+    $cf = trim((string) ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ''));
+    if ($cf !== '' && filter_var($cf, FILTER_VALIDATE_IP)) {
+        return $cf;
+    }
+    // Generic reverse proxy: the real client is the last address the proxy
+    // appended to X-Forwarded-For; earlier entries are client-controlled.
+    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $hops = array_map('trim', explode(',', (string) $_SERVER['HTTP_X_FORWARDED_FOR']));
         $last = end($hops);
         if ($last !== false && filter_var($last, FILTER_VALIDATE_IP)) {

@@ -77,16 +77,26 @@ respected.
 
 ### Deploy on your own server (Ubuntu)
 
-One container serves the site and [Caddy](https://caddyserver.com) handles HTTPS certificates automatically:
+The site runs in one container behind a [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/).
+Cloudflare terminates HTTPS, the server opens **no inbound ports**, and the container listens on `127.0.0.1` only.
 
 ```bash
 # on the server (Docker Engine + compose plugin installed)
 git clone https://github.com/stanleyowen/theeternity.git && cd theeternity
-# point your domain's DNS A record at the server, allow ports 80 and 443 (e.g. `ufw allow 80,443/tcp`)
-DOMAIN=eternity.example.com docker compose -f docker-compose.prod.yml up -d --build
+
+# A) cloudflared already runs on the host: point the tunnel's public hostname at http://localhost:8080
+docker compose -f docker-compose.prod.yml up -d --build
+
+# B) or run cloudflared in Docker as well: create a tunnel in the Zero Trust dashboard,
+#    set its public hostname service to http://web:80, and pass its token
+TUNNEL_TOKEN=<token> docker compose -f docker-compose.prod.yml --profile tunnel up -d --build
 ```
 
-Updating later: `git pull && DOMAIN=eternity.example.com docker compose -f docker-compose.prod.yml up -d --build`.
+Updating later: `git pull`, then run the same `up -d --build` command again.
+
+`TRUST_PROXY=true` is set so the app reads the visitor's IP from `CF-Connecting-IP` and sees the HTTPS scheme. This is
+safe only because the port is bound to localhost and reachable solely through the tunnel. Keep it that way. (Docker
+publishes ports around `ufw`, so a `0.0.0.0` binding would expose the app directly.)
 
 **Why not Netlify / Vercel / GitHub Pages?** They host static files and serverless JavaScript functions, and have no
 PHP runtime. This site needs PHP for its sessions, the demo dashboards and the database. Any host that runs a Docker
