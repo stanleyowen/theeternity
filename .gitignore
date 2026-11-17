@@ -4,3 +4,4 @@ storage/database/*
 storage/uploads/*
 storage/.app_key
 !storage/**/.gitkeep
+.netlify
