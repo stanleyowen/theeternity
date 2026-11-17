@@ -120,6 +120,9 @@ function csrf_token(): string
 
 function csrf_field(): string
 {
+    if (Config::staticExport()) {
+        return ''; // no server will ever receive the form
+    }
     return '<input type="hidden" name="_csrf" value="' . e(csrf_token()) . '">';
 }
 

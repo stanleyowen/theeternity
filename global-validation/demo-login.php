@@ -9,7 +9,11 @@ declare(strict_types=1);
 define('ALLOW_IN_ARCHIVE', true);
 require __DIR__ . '/../app/bootstrap.php';
 
-require_post();
+// The static exporter (a local, never-exposed container) signs in with a plain GET,
+// because static pages carry no CSRF tokens. Everywhere else this is POST-only.
+if (!Config::staticExport()) {
+    require_post();
+}
 $lang = input('lang') === 'id' ? 'id' : 'en';
 set_lang($lang);
 

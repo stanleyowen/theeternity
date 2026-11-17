@@ -98,9 +98,23 @@ Updating later: `git pull`, then run the same `up -d --build` command again.
 safe only because the port is bound to localhost and reachable solely through the tunnel. Keep it that way. (Docker
 publishes ports around `ufw`, so a `0.0.0.0` binding would expose the app directly.)
 
-**Why not Netlify / Vercel / GitHub Pages?** They host static files and serverless JavaScript functions, and have no
-PHP runtime. This site needs PHP for its sessions, the demo dashboards and the database. Any host that runs a Docker
-container works: your own VPS, Render, Fly.io, Railway, Google Cloud Run.
+### Static hosting (Netlify, Cloudflare Pages) — no backend
+
+Because the archive is read-only, every page can be rendered once and published as plain files. Nothing runs on the
+server, so there is nothing to patch or attack.
+
+```bash
+tools/export-static.sh     # needs Docker; renders every page (incl. both demo dashboards) into dist/
+git add dist && git commit -m "Re-export static site" && git push
+```
+
+`netlify.toml` publishes `dist/` with no build step. In the static build:
+- "View as Player / Administrator" link to pre-rendered dashboards.
+- Forms show the "archived" message instead of submitting.
+- Query-string pages become separate files (`edit-alert-id.php?id=1` → `edit-alert-id-1.html`).
+- Old `.php` URLs redirect via `_redirects`, and the PHP app's security headers are carried over in `_headers`.
+
+**Re-run the export after any change to pages, styles or seed data.** `dist/` is not updated automatically.
 
 ### Live (writable) mode
 

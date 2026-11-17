@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <title>Eternity Esports | Berpartisipasi Dalam Scrim</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/assets/css/dashboard-style.css?v=2026.11">
+  <link rel="stylesheet" href="/assets/vendor/bootstrap3/css/bootstrap.min.css?v=2026.11">
+  <link rel="stylesheet" href="/assets/css/dashboard-extra.css?v=2026.11">
+  <link rel="icon" href="/assets/img/etr-img-1.jpeg?v=2026.11">
+</head>
+
+<body data-static-archive="Situs ini telah diarsipkan (baca-saja). Pengiriman dan perubahan dinonaktifkan.">
+	<div class="container-fluid">
+	  <div class="row content">
+		<div class="col-sm-3 sidenav">
+		  <h4>Selamat Datang : Demo Squad</h4>
+		  <h4><font color="green">Online</font></h4>
+		  <div class="alert alert-warning archive-note"><span class="label label-danger">Diarsipkan</span> Anda sedang menjelajahi demo arsip. Semua dapat dilihat, tetapi perubahan dinonaktifkan.</div>
+		  <br>
+		  <h4>Menus :</h4>
+		  <ul class="nav nav-pills nav-stacked">
+			<li><a href="/id/">Home</a></li>
+			<li><a href="/id/dashboard/">DashBoard</a></li>
+			<li class="active"><a href="/id/dashboard/participate-scrim.html">1. Berpartisipasi Dalam Scrim</a></li>
+			<li><a href="/id/dashboard/join-group.html">2. Bergabung Di Grup WA</a></li>
+			<li><a href="/id/dashboard/upload-center.html">3. Pusat Pengunggahan</a></li>
+			<li><a href="/id/dashboard/attendance.html">4. Absensi</a></li>
+			<li><a href="/id/dashboard/submit-result.html">5. Mengirim Hasil Akhir</a></li>
+			<li><a href="/id/dashboard/certificate.html">6. Unduh E-Sertifikat</a></li>
+			<li><a href="/id/dashboard/support.html">Customer Service</a></li>
+			<li><a href="/id/">Keluar</a></li>
+		  </ul>
+		</div>
+
+		<div class="col-sm-9">
+		  <h2>Cara Berpartisipasi Dalam Scrim</h2>
+		  <h5><span class="glyphicon glyphicon-time"></span> Posted by Admin.</h5>
+		  <h5><span class="label label-danger">Tutorial</span></h5><br>
+		  <font color="red">Procedure :</font><br>
+		  <ol>
+			<li>Baca Syarat dan Ketentuan yang berlaku</li>
+			<li>Pilih Scrim yang akan User ikuti</li>
+			<li>Pastikan User mencentang semua Syarat dan Ketentuan</li>
+			<li>User tidak diperbolehkan mengikuti lebih dari 1 Scrim yang diadakan Eternity secara bersamaan</li>
+			<li>User menekan Partisipasi</li>
+			<li>Jika User telah menekan tombol Partisipasi dan muncul notifikasi 'Successfully Participated the Scrim', User berhasil register dan dapat mengakses fitur-fitur seperti 'Pusat Pengunggahan', 'Kehadiran / Absensi', dan 'Unduh E-Sertifikat'.</li>
+			<li>User tidak akan mengakses Tab ini sampai Event yang diikuti User Berakhir.</li>
+		  </ol>
+
+		  <form action="/function/participate-in-scrim.php" method="post">
+						<label for="event_id"><b>Participate in :</b></label>
+				<select name="event_id" id="event_id" required>
+					<option value="1">Eternity Scrim Season 1</option>
+				</select><br>
+			<label class="container">Saya setuju dengan <a href="/id/event/terms-and-conditions-scrim.html">Syarat dan Ketentuan</a> yang berlaku
+			  <input type="checkbox" name="term1" value="1" required>
+			  <span class="checkmark"></span>
+			</label>
+
+			<label class="container">Saya setuju dengan Eternity Esports dapat mengumpulkan Informasi Pribadi untuk memonitor user dengan tujuan untuk mencegah terjadinya kecurangan selama Scrim.
+			  <input type="checkbox" name="term2" value="1" required>
+			  <span class="checkmark"></span>
+			</label>
+			<button class="btn first" type="submit">PARTICIPATE</button>
+		  </form>
+		</div>
+	  </div>
+	</div>
+
+	<footer class="footer text-faded text-center py-0">
+    <div class="container">
+      <p class="m-0 small">Hak Cipta &copy; 2020 Eternity Esports | Dirancang oleh <a href="https://github.com/stanleyowen" target="_blank" rel="noopener noreferrer">Stanley Owen</a></p>
+    </div>
+  </footer>
+
+  <script src="/assets/vendor/jquery/jquery.min.js?v=2026.11"></script>
+  <script src="/assets/vendor/bootstrap3/js/bootstrap.min.js?v=2026.11"></script>
+  <script src="/assets/js/app.js?v=2026.11"></script>
+</body>
+</html>

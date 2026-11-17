@@ -283,3 +283,12 @@ select {
   max-width: 100%;
   height: auto;
 }
+a.demo-link {
+  display: block;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+}
+a.demo-link:hover {
+  color: white;
+}

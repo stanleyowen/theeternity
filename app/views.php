@@ -43,17 +43,27 @@ function lang_url(string $page, ?string $lang = null): string
 
 function logout_url(): string
 {
+    if (Config::staticExport()) {
+        return lang_url('index.php'); // a static site has no session to end
+    }
     return url('global-validation/logout.php') . '?_csrf=' . rawurlencode(csrf_token());
 }
 
-/** Body attribute carrying pending flash messages; app.js shows them with alert() like the original. */
-function flash_attr(): string
+/**
+ * Attributes for <body>: pending flash messages (app.js shows them with alert(),
+ * like the original) and, in a static export, the message shown when a form is submitted.
+ */
+function body_attrs(): string
 {
-    $messages = take_flash();
-    if ($messages === []) {
-        return '';
+    $attrs = '';
+    if (Config::staticExport()) {
+        $attrs .= ' data-static-archive="' . e(t('archive_write')) . '"';
     }
-    return ' data-flash="' . e(json_encode(array_values($messages), JSON_UNESCAPED_UNICODE)) . '"';
+    $messages = take_flash();
+    if ($messages !== []) {
+        $attrs .= ' data-flash="' . e(json_encode(array_values($messages), JSON_UNESCAPED_UNICODE)) . '"';
+    }
+    return $attrs;
 }
 
 /* ---- Small components ---------------------------------------------------- */
@@ -115,7 +125,7 @@ function public_header(string $title, array $opts = []): void
 <?php endif; ?>
 </head>
 
-<body<?= flash_attr() ?>>
+<body<?= body_attrs() ?>>
 <?php if (($opts['topbar'] ?? true) === true):
         $links = $opts['lang_links'] ?? ['en' => 'index.php', 'id' => 'index.php']; ?>
   <footer class="footer text-faded text-center py-3 fixed-top">
@@ -197,7 +207,7 @@ function public_nav(string $active, bool $authMenu = true): void
 function public_footer(string $variant = 'default'): void
 {
     $copyright = e(t('copyright')) . ' &copy; 2020 Eternity Esports | ' . e(t('designed_by'))
-        . ' <a href="https://instagram.com/stanley_owenn/" target="_blank" rel="noopener noreferrer">Stanley Owen</a>';
+        . ' <a href="https://github.com/stanleyowen" target="_blank" rel="noopener noreferrer">Stanley Owen</a>';
     if ($variant === 'login'): ?>
   <footer class="footer text-faded text-center py-0 fixed-bottom">
     <div class="container-footer">
@@ -258,12 +268,17 @@ function demo_access_panel(): void
     } ?>
 			  <div class="demo-panel">
 				<p><b><?= e(t('demo_title')) ?></b><br><?= e(t('demo_intro')) ?></p>
+<?php if (Config::staticExport()): /* static site: link straight to the pre-rendered demo dashboards */ ?>
+				<a class="submit demo-link" href="<?= e(lang_url('dashboard/index.php')) ?>"><i class="fa fa-gamepad" aria-hidden="true"></i> <?= e(t('demo_player')) ?></a>
+				<a class="submit demo-link" href="<?= e(url('en-us/dashboard/admin/dashboard-admin.php')) ?>"><i class="fa fa-shield" aria-hidden="true"></i> <?= e(t('demo_admin')) ?></a>
+<?php else: ?>
 				<form method="post" action="<?= e(url('global-validation/demo-login.php')) ?>">
 				  <?= csrf_field() ?>
 				  <input type="hidden" name="lang" value="<?= e(current_lang()) ?>">
 				  <button type="submit" class="submit" name="as" value="user"><i class="fa fa-gamepad" aria-hidden="true"></i> <?= e(t('demo_player')) ?></button>
 				  <button type="submit" class="submit" name="as" value="admin"><i class="fa fa-shield" aria-hidden="true"></i> <?= e(t('demo_admin')) ?></button>
 				</form>
+<?php endif; ?>
 			  </div>
 <?php
 }
@@ -297,7 +312,7 @@ function dashboard_header(string $title, string $kind, string $active, array $us
 <?php endif; ?>
 </head>
 
-<body<?= flash_attr() ?>>
+<body<?= body_attrs() ?>>
 	<div class="container-fluid">
 	  <div class="row content">
 		<div class="col-sm-3 sidenav">
@@ -390,7 +405,7 @@ function dashboard_footer(): void
 
 	<footer class="footer text-faded text-center py-0">
     <div class="container">
-      <p class="m-0 small"><?= e(t('copyright')) ?> &copy; 2020 Eternity Esports | <?= e(t('designed_by')) ?> <a href="https://instagram.com/stanley_owenn/" target="_blank" rel="noopener noreferrer">Stanley Owen</a></p>
+      <p class="m-0 small"><?= e(t('copyright')) ?> &copy; 2020 Eternity Esports | <?= e(t('designed_by')) ?> <a href="https://github.com/stanleyowen" target="_blank" rel="noopener noreferrer">Stanley Owen</a></p>
     </div>
   </footer>
 

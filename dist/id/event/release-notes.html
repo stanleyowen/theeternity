@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Eternity Esports | Info</title>
+  <link rel="icon" href="/assets/img/etr-img-1.jpeg?v=2026.11">
+  <link rel="stylesheet" href="/assets/css/dashboard-style.css?v=2026.11">
+  <link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.min.css?v=2026.11">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+  <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css?v=2026.11">
+  <link rel="stylesheet" href="/assets/css/style.css?v=2026.11">
+  <link rel="stylesheet" href="/assets/css/button.css?v=2026.11">
+</head>
+
+<body data-static-archive="Situs ini telah diarsipkan (baca-saja). Pengiriman dan perubahan dinonaktifkan.">
+  <div class="alert alert-warning archive-alert" role="status">
+    <i class="fa fa-archive" aria-hidden="true"></i> Situs ini telah diarsipkan. Eternity Esports tidak lagi mengadakan scrim; situs ini dipertahankan dalam mode baca-saja agar kisahnya tetap dapat dilihat.    <a href="/id/event/release-notes.html#archive-edition">Baca catatan arsip <i class="fa fa-external-link" aria-hidden="true"></i></a>
+  </div>
+  <div class="alert alert-success">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Eternity v0.11 is live: SSL, multi-language support and new security layers.    <a href="https://instagram.com/eternity_esports.id" rel="noopener noreferrer">Klik di sini <i class="fa fa-external-link" aria-hidden="true"></i></a>
+  </div>
+  <nav class="navbar navbar-expand-lg navbar-dark py-lg-4" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="#">Menu</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item px-lg-4">
+            <a class="nav-link text-uppercase text-expanded" href="/id/">Beranda</a>
+          </li>
+          <li class="nav-item active px-lg-4">
+            <a class="nav-link text-uppercase text-expanded" href="/id/event.html">Info <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item px-lg-4">
+            <a class="nav-link text-uppercase text-expanded" href="/id/gallery.html">Galeri</a>
+          </li>
+          <li class="nav-item px-lg-4">
+            <a class="nav-link text-uppercase text-expanded" href="/id/contact-us.html">Hubungi Kami</a>
+          </li>
+          <li class="nav-item px-lg-4"><a class="nav-link text-uppercase text-expanded" href="/id/login/">Masuk</a></li>
+          <li class="nav-item px-lg-4"><a class="nav-link text-uppercase text-expanded" href="/id/login/register.html">Daftar</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <section class="page-section clearfix">
+    <div class="container">
+		<div class="intro-text left-0 bg-faded p-5 rounded">
+		  <h2 class="section-heading mb-4">
+			<span class="section-heading-upper">Catatan RIlis</span>
+		  </h2>
+		  <p>
+			Diposting oleh : <font color="red">Admin</font><br>
+			Diposting pada : <font color="red"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-09-08 07:39:53</font><br><br>
+			<center><b id="archive-edition">Eternity v1.0 &mdash; Edisi Arsip (2026)</b></center>
+			<br>
+			<p>Eternity Esports tidak lagi mengadakan scrim. Situs ini dipulihkan sebagai arsip baca-saja agar proyek ini tetap dapat dilihat, dan kodenya dibangun ulang dengan standar keamanan modern tanpa mengubah desain asli tahun 2020.</p>
+			<ol>
+				<li>Mode arsip: situs bersifat baca-saja, dan pendaftaran, scrim, serta pesan telah ditutup. Pengunjung tetap dapat menjelajahi dashboard Pemain dan Administrator melalui akses demo di halaman Masuk.
+				<li>Dibangun ulang dengan PHP 8 dan prepared statement untuk setiap query database (perlindungan dari SQL injection)
+				<li>Kata sandi di-hash dengan bcrypt, dan proses masuk hanya menggunakan cookie sesi yang aman. Kredensial tidak pernah disimpan di cookie.
+				<li>Peran pengguna diverifikasi di server untuk setiap halaman dan aksi. Akses Administrator tidak dapat lagi dipilih dari formulir masuk.
+				<li>Semua konten pengguna di-escape (perlindungan dari XSS), dan setiap halaman dilindungi Content Security Policy yang ketat
+				<li>Perlindungan CSRF di setiap formulir. Aksi hapus memerlukan permintaan POST dengan konfirmasi.
+				<li>Foto yang diunggah diverifikasi sebagai gambar asli, diganti namanya, di-encode ulang, dan disimpan secara privat
+				<li>Pesan dienkripsi dengan AES-256-GCM terautentikasi. Masuk, pendaftaran, dan pesan dibatasi lajunya di server.
+				<li>Diperbarui ke Bootstrap 4.6.2 / 3.4.1, jQuery 3.7.1, dan Font Awesome 4.7, semuanya disajikan secara lokal
+			</ol>
+			<br>
+			<center><b>Eternity v0.11</b></center>
+			<br>
+			<ol>
+				<li>Menambahkan 3+ lapisan keamanan ke Situs Web Eternity :
+					<ul type="disc">
+						<li>Menambahkan Sertifikat SSL untuk Mengamankan Informasi Klien ketika data berpindah dari Komputer Klien ke WebServer
+						<li>Menambahkan fitur keamanan di Pesan, Masuk, Daftar, dll. Untuk mencegah dari Bot dan Spam
+						<li>Mengubah beberapa logika dalam Validasi Login dan Formulir Pendaftaran
+						<li>Pesan Kesalahan Dinonaktifkan untuk mencegah kerentanan, kebocoran data, dll.
+					</ul>
+				<li>Menambahkan Fitur MultiLanguage yaitu Indonesia (ID)
+				<li>Menambahkan Halaman Error :
+					<ul type="disc">
+						<li>403 Forbidden
+						<li>404 Not Found
+						<li>405 Method Not Allowed
+						<li>408 Request Time Out
+						<li>500 Internal Server Error
+						<li>502 Bad Gateway
+						<li>503 Service Currently Unavailable
+						<li>504 Gateway Timeout
+					</ul>
+				<li>Memperbaiki Bug pada Validasi Pesan, Validasi Login, dan Validasi Registrasi
+				<li>Changed Style of :
+					<ul type="disc">
+						<li>Formulir Pesan
+						<li>Formulir Masuk
+						<li>Formulir Daftar
+					</ul>
+				</li>
+				<li>Memperbaiki User Interface (UI) dalam Formulir Login dan Pendaftaran
+				<li>Pembatasan permintaan dalam Formulir Pesan, Login, dan Pendaftaran dihapus dan diubah dengan reCAPTCHA
+			</ol>
+			<center><b>Eternity v0.10</b></center>
+			<p>Eternity Esports berisi 5 fitur untuk Pengguna, yaitu:</p>
+			<ol>
+				<li> Masuk dan Keluar dengan Aman dengan Tingkat Validasi (Akses 24/7/365)
+				<li> Pengguna Dashboard
+				<li> Fitur Kehadiran
+				<li> Unggah Fitur
+				<li> Unduh Fitur Sertifikat
+			</ol>
+			<p>Eternity Esports berisi lebih dari 10 fitur untuk Administrator, yaitu:<br></p>
+			<ol>
+				<li> Masuk dan Keluar dengan Aman dengan Tingkat Validasi (Akses 24/7/365)
+				<li> Edit Acara Scrim
+				<li> Edit Lansiran untuk Situs Web
+				<li> Fitur Unggah untuk Sertifikat dan Tab Galeri
+				<li> Kelola, Edit, Hapus, dan Memblokir Pengguna
+				<li> Lihat Unggahan Pengguna
+				<li> Adakan Acara
+				<li> Lihat Daftar Kehadiran
+				<li> Lihat Pesan
+				<li> Memantau Log Keamanan
+				<li> Memantau Aktivitas Pengguna
+			</ol>
+			<p>Beberapa Fitur Keamanan yang kami sediakan, seperti :</p>
+			<ol>
+				<li> Mencegah dari Brute Attack
+				<li> Log Aktivitas Pengguna
+				<li> IP Blocker
+			</ol>
+			<p><b>Moto Kami : "<i>Bersatu Kita Teguh, Bercerai Kita Runtuh</i>"
+			<br>Salam Kami,<br><br>Tim Eternity</b></p>
+		  </p>
+		</div>
+    </div>
+  </section>
+
+  <footer class="footer text-faded text-center py-3 fixed-bottom">
+    <div class="container">
+      <p class="m-0 small">Hak Cipta &copy; 2020 Eternity Esports | Dirancang oleh <a href="https://github.com/stanleyowen" target="_blank" rel="noopener noreferrer">Stanley Owen</a></p>
+    </div>
+  </footer>
+
+  <div class="button" title="Hubungi Kami">
+    <a href="https://wa.me/message/SGOS5RUB46CUA1" class="hvr-float-shadow" target="_blank" rel="noopener noreferrer">
+      <img src="/assets/img/whatsapp-logo.png?v=2026.11" width="60" alt="WhatsApp">
+    </a>
+  </div>
+  <div class="button1" title="Ikuti Kami">
+    <a href="https://instagram.com/eternity_esports.id" class="hvr-float-shadow1" target="_blank" rel="noopener noreferrer">
+      <img src="/assets/img/instagram-logo.webp?v=2026.11" width="60" alt="Instagram">
+    </a>
+  </div>
+  <div class="button2" title="Kirim Email">
+    <a href="mailto:theeternity.esports.id@gmail.com" class="hvr-float-shadow2">
+      <img src="/assets/img/gmail-logo.png?v=2026.11" width="60" alt="Email">
+    </a>
+  </div>
+
+  <script src="/assets/vendor/jquery/jquery.min.js?v=2026.11"></script>
+  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js?v=2026.11"></script>
+  <script src="/assets/js/app.js?v=2026.11"></script>
+</body>
+</html>

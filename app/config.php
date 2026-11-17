@@ -62,6 +62,16 @@ final class Config
         return env_bool('ARCHIVE_MODE', true);
     }
 
+    /**
+     * Static export (implies archive mode): pages are rendered once by
+     * tools/export-static.sh and published as plain files (e.g. on Netlify).
+     * Session-based bits (demo sign-in, logout, form posts) render static equivalents.
+     */
+    public static function staticExport(): bool
+    {
+        return self::archiveMode() && env_bool('STATIC_EXPORT', false);
+    }
+
     public static function dbDsn(): string
     {
         return env('DB_DSN', 'sqlite:' . APP_ROOT . '/storage/database/eternity.sqlite');

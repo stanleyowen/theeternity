@@ -21,7 +21,7 @@ if (isset($_SESSION['language'])) {
 	<link rel="stylesheet" href="<?= e(asset('css/language-style.css')) ?>">
 </head>
 
-<body<?= flash_attr() ?>>
+<body<?= body_attrs() ?>>
 	<div class="container-login100" style="background-image: url('<?= e(asset('img/etr-img-1.jpeg')) ?>');">
 		<div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
 			<form class="login100-form validate-form">

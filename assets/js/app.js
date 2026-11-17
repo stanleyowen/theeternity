@@ -22,6 +22,16 @@
       } catch (e) { /* ignore malformed payload */ }
     }
 
+    // Static export: there is no server behind the forms, so explain instead of submitting.
+    var staticMessage = document.body && document.body.getAttribute('data-static-archive');
+    if (staticMessage) {
+      document.addEventListener('submit', function (event) {
+        event.preventDefault();
+        event.stopPropagation(); // skip the delete confirmation: nothing would be deleted
+        window.alert(staticMessage);
+      }, true);
+    }
+
     // Language chooser buttons on the landing page.
     document.querySelectorAll('[data-href]').forEach(function (el) {
       el.addEventListener('click', function () { window.location.href = el.getAttribute('data-href'); });

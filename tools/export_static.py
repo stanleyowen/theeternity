@@ -1,0 +1,243 @@
+#!/usr/bin/env python3
+"""
+Render the archive into a static site (Netlify, Cloudflare Pages, any file host).
+
+    tools/export-static.sh                       # builds the image, runs it, calls this script
+    python3 tools/export_static.py BASE_URL OUT  # against an already running STATIC_EXPORT=true container
+
+How it works:
+- Crawls the site starting from the home pages with three sessions: anonymous
+  (public pages), the demo player (player dashboards) and the demo admin (admin
+  console), following every internal link.
+- Writes each page as an .html file and rewrites internal links to point at it.
+  Query-string pages become separate files, e.g.
+  edit-alert-id.php?id=1 -> edit-alert-id-1.html
+- Copies assets/, exports uploaded images to /media/<bucket>/<file>, and writes
+  Netlify's _redirects (old .php URLs -> new files) and _headers (the same
+  security headers the PHP app sends).
+
+Standard library only.
+"""
+import html
+import http.cookiejar
+import os
+import re
+import shutil
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+from collections import deque
+
+if len(sys.argv) != 3:
+    sys.exit(__doc__)
+
+BASE = sys.argv[1].rstrip("/")
+OUT = os.path.abspath(sys.argv[2])
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_HOST = urllib.parse.urlsplit(BASE).netloc
+
+# Pages that nothing links to but that should still exist in the archive.
+SEEDS = [
+    "/en-us/index.php", "/id/index.php",
+    "/en-us/event/event-view.php?encryption=20200915", "/id/event/event-view.php?encryption=20200915",
+]
+PHP_NOISE = re.compile(rb"(<b>)?(Warning|Notice|Deprecated|Fatal error|Parse error)(</b>)?:|Uncaught", re.I)
+LINK_ATTR = re.compile(r'(\s(?:href|src|data-href)=")([^"]*)(")')
+MEDIA_NAME = re.compile(r"^[a-f0-9]{32}\.(jpg|png)$")
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args, **kwargs):
+        return None
+
+
+class Client:
+    def __init__(self):
+        jar = http.cookiejar.CookieJar()
+        self.opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar), NoRedirect)
+
+    def get(self, path):
+        try:
+            resp = self.opener.open(BASE + path, timeout=30)
+            return resp.status, resp.headers, resp.read()
+        except urllib.error.HTTPError as e:
+            return e.code, e.headers, e.read()
+
+
+def slug(value):
+    return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-") or "x"
+
+
+def normalize(path, query):
+    """Canonical key for a URL: path + sorted query (minus params that don't change content)."""
+    params = [(k, v) for k, v in urllib.parse.parse_qsl(query) if k not in ("_csrf", "v")]
+    if path.endswith("/"):
+        path += "index.php"
+    return path + ("?" + urllib.parse.urlencode(sorted(params)) if params else "")
+
+
+def static_path(key):
+    """Where a crawled URL lives in the static site."""
+    path, _, query = key.partition("?")
+    params = urllib.parse.parse_qsl(query)
+    if path == "/media.php":
+        q = dict(params)
+        if q.get("b") and MEDIA_NAME.match(q.get("f", "")):
+            return f"/media/{slug(q['b'])}/{q['f']}"
+        return None
+    if not path.endswith(".php"):
+        return path
+    params = [(k, v) for k, v in params if k != "lang"]  # ?lang= only switched the session language
+    base = path[:-4]
+    if base.endswith("/index") and not params:
+        return base[: -len("index")]  # served as .../index.html, linked as .../
+    return base + "".join("-" + slug(v) for _, v in params) + ".html"
+
+
+def file_for(spath):
+    return os.path.join(OUT, (spath + "index.html" if spath.endswith("/") else spath).lstrip("/"))
+
+
+def client_for(path, clients):
+    if path == "/index.php":
+        return clients["root"]
+    if path.startswith(("/en-us/dashboard/admin/", "/id/dashboard/admin/")) or path == "/media.php":
+        return clients["admin"]
+    if re.match(r"^/(en-us|id)/dashboard/", path):
+        return clients["player"]
+    return clients["anon"]
+
+
+def internal_key(raw, page_key):
+    """Resolve a link found on a page to a crawlable key, or None if it is external/asset/anchor."""
+    value = html.unescape(raw).strip()
+    if not value or value.startswith(("#", "mailto:", "tel:", "javascript:", "data:")):
+        return None, ""
+    absolute = urllib.parse.urljoin(BASE + page_key, value)
+    parts = urllib.parse.urlsplit(absolute)
+    if parts.netloc != BASE_HOST or parts.path.startswith("/assets/"):
+        return None, ""
+    if not (parts.path.endswith(".php") or parts.path.endswith("/")):
+        return None, ""
+    return normalize(parts.path, parts.query), parts.fragment
+
+
+def main():
+    if os.path.exists(OUT):
+        if not os.path.isfile(os.path.join(OUT, ".static-export")):
+            sys.exit(f"Refusing to overwrite {OUT}: it was not created by this exporter.")
+        shutil.rmtree(OUT)
+    os.makedirs(OUT)
+    open(os.path.join(OUT, ".static-export"), "w").write("generated by tools/export_static.py; do not edit\n")
+
+    clients = {name: Client() for name in ("root", "anon", "player", "admin")}
+    for name, role in (("player", "user"), ("admin", "admin")):
+        status, headers, _ = clients[name].get(f"/global-validation/demo-login.php?as={role}&lang=en")
+        if status not in (302, 303):
+            sys.exit(f"Demo sign-in as {role} failed ({status}). Is the server running with STATIC_EXPORT=true?")
+
+    pages, aliases, problems = {}, {}, []
+    queue = deque([normalize("/", "")] + [normalize(*s.split("?", 1)) if "?" in s else normalize(s, "") for s in SEEDS])
+    seen = set()
+    while queue:
+        key = queue.popleft()
+        if key in seen:
+            continue
+        seen.add(key)
+        path = key.partition("?")[0]
+        status, headers, body = client_for(path, clients).get(key)
+
+        if status in (301, 302, 303, 307, 308):
+            target = urllib.parse.urlsplit(urllib.parse.urljoin(BASE + key, headers.get("Location", "")))
+            aliases[key] = normalize(target.path, target.query)
+            queue.append(aliases[key])
+            continue
+        if status != 200:
+            problems.append(f"{status} {key}")
+            continue
+        spath = static_path(key)
+        if spath is None:
+            problems.append(f"unmappable {key}")
+            continue
+        if "text/html" not in headers.get("Content-Type", ""):
+            pages[key] = (spath, body, False)
+            continue
+        if PHP_NOISE.search(body):
+            problems.append(f"PHP warning on {key}")
+        text = body.decode("utf-8")
+        pages[key] = (spath, text, True)
+        for match in LINK_ATTR.finditer(text):
+            link_key, _ = internal_key(match.group(2), key)
+            if link_key and link_key not in seen:
+                queue.append(link_key)
+
+    def resolve(key, depth=0):
+        while key in aliases and depth < 10:
+            key, depth = aliases[key], depth + 1
+        return pages[key][0] if key in pages else None
+
+    for key, (spath, content, is_html) in pages.items():
+        target = file_for(spath)
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        if not is_html:
+            open(target, "wb").write(content)
+            continue
+
+        def rewrite(match, page_key=key):
+            link_key, fragment = internal_key(match.group(2), page_key)
+            if not link_key:
+                return match.group(0)
+            resolved = resolve(link_key)
+            if resolved is None:
+                problems.append(f"dead link {link_key} on {page_key}")
+                return match.group(0)
+            return match.group(1) + html.escape(resolved + (f"#{fragment}" if fragment else "")) + match.group(3)
+
+        open(target, "w", encoding="utf-8").write(LINK_ATTR.sub(rewrite, content))
+
+    # 404 page (served automatically by Netlify / Cloudflare Pages).
+    _, _, body404 = clients["anon"].get("/global-error/404.php")
+    open(os.path.join(OUT, "404.html"), "wb").write(body404.replace(b'href="/index.php"', b'href="/"'))
+
+    shutil.copytree(os.path.join(REPO, "assets"), os.path.join(OUT, "assets"),
+                    ignore=shutil.ignore_patterns("*.map", ".DS_Store"))
+
+    # Old .php URLs keep working: rules with query parameters first, then plain paths.
+    query_rules, plain_rules = set(), []
+    for key in sorted(set(pages) | set(aliases)):
+        path, _, query = key.partition("?")
+        if not path.endswith(".php") or path == "/media.php" or path.startswith("/global-validation/"):
+            continue  # endpoints, not pages: their links were already rewritten
+        target = resolve(key)
+        if target is None:
+            continue
+        params = [(k, v) for k, v in urllib.parse.parse_qsl(query) if k != "lang"]
+        if len(params) == 1 and slug(params[0][1]) == params[0][1]:
+            name = params[0][0]
+            base = target[: -len("-" + params[0][1] + ".html")]
+            query_rules.add(f"{path} {name}=:{name} {base}-:{name}.html 301")
+        elif not params and path != target and f"{path} {target} 301" not in plain_rules:
+            plain_rules.append(f"{path} {target} 301")
+    with open(os.path.join(OUT, "_redirects"), "w") as f:
+        f.write("# Generated by tools/export_static.py: legacy .php URLs -> static files\n")
+        f.write("\n".join(sorted(query_rules) + plain_rules) + "\n")
+
+    # Same security headers as the PHP app (copied from a live response).
+    _, live, _ = clients["anon"].get("/en-us/index.php")
+    names = ["Content-Security-Policy", "X-Content-Type-Options", "X-Frame-Options", "Referrer-Policy",
+             "Permissions-Policy", "Cross-Origin-Opener-Policy"]
+    lines = ["/*"] + [f"  {n}: {live[n]}" for n in names if live.get(n)]
+    lines += ["  Strict-Transport-Security: max-age=31536000", "", "/assets/*", "  Cache-Control: public, max-age=604800",
+              "", "/media/*", "  Cache-Control: public, max-age=604800"]
+    open(os.path.join(OUT, "_headers"), "w").write("\n".join(lines) + "\n")
+
+    html_count = sum(1 for p in pages.values() if p[2])
+    print(f"Exported {html_count} pages and {len(pages) - html_count} images to {OUT}")
+    if problems:
+        print("Problems:\n  " + "\n  ".join(sorted(set(problems))))
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

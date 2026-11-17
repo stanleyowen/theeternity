@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <title>Eternity Esports | Absensi</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/assets/css/dashboard-style.css?v=2026.11">
+  <link rel="stylesheet" href="/assets/vendor/bootstrap3/css/bootstrap.min.css?v=2026.11">
+  <link rel="stylesheet" href="/assets/css/dashboard-extra.css?v=2026.11">
+  <link rel="icon" href="/assets/img/etr-img-1.jpeg?v=2026.11">
+</head>
+
+<body data-static-archive="Situs ini telah diarsipkan (baca-saja). Pengiriman dan perubahan dinonaktifkan.">
+	<div class="container-fluid">
+	  <div class="row content">
+		<div class="col-sm-3 sidenav">
+		  <h4>Selamat Datang : Demo Squad</h4>
+		  <h4><font color="green">Online</font></h4>
+		  <div class="alert alert-warning archive-note"><span class="label label-danger">Diarsipkan</span> Anda sedang menjelajahi demo arsip. Semua dapat dilihat, tetapi perubahan dinonaktifkan.</div>
+		  <br>
+		  <h4>Menus :</h4>
+		  <ul class="nav nav-pills nav-stacked">
+			<li><a href="/id/">Home</a></li>
+			<li><a href="/id/dashboard/">DashBoard</a></li>
+			<li><a href="/id/dashboard/participate-scrim.html">1. Berpartisipasi Dalam Scrim</a></li>
+			<li><a href="/id/dashboard/join-group.html">2. Bergabung Di Grup WA</a></li>
+			<li><a href="/id/dashboard/upload-center.html">3. Pusat Pengunggahan</a></li>
+			<li class="active"><a href="/id/dashboard/attendance.html">4. Absensi</a></li>
+			<li><a href="/id/dashboard/submit-result.html">5. Mengirim Hasil Akhir</a></li>
+			<li><a href="/id/dashboard/certificate.html">6. Unduh E-Sertifikat</a></li>
+			<li><a href="/id/dashboard/support.html">Customer Service</a></li>
+			<li><a href="/id/">Keluar</a></li>
+		  </ul>
+		</div>
+
+		<div class="col-sm-9">
+		  <h2>Cara Melakukan Absensi</h2>
+		  <h5><span class="glyphicon glyphicon-time"></span> Posted by Admin.</h5>
+		  <h5><span class="label label-danger">Welcome</span></h5><br>
+		  <font color="red">Procedure :</font><br>
+		  <ol>
+			<li>Pilihlah scrim yang akan dilakukan User untuk absensi</li>
+			<li>Scrim Token dibagikan oleh Admin 3-12 jam sebelum Scrim</li>
+			<li>Masukkan Scrim Token yang dikirim oleh Admin di WhatsApp Grup</li>
+			<li>Jika Anda sudah menerima notifikasi 'Attendance was successfully done! Thank You', User telah berhasil dalam melakukan Absensi</li>
+			<li>User yang terlambat melakukan Absensi, sama dengan ABSEN, dan digantikan dengan SLOT WAITING LIST</li>
+		  </ol>
+
+		  <form action="/function/attendance-user.php" method="post">
+						<label for="id"><b>Absensi &nbsp; &nbsp; &nbsp;:</b></label>
+				<select name="id" id="id" required>
+					<option value="1">Eternity Scrim Season 1</option>
+				</select><br>
+			<label for="token"><b>Token &nbsp; &nbsp; &nbsp; &nbsp; :</b></label>
+			<input type="password" placeholder="Enter Token Provided by Administrator" name="token" id="token" autocomplete="off" required><br>
+			<button class="btn first" type="submit">Submit</button>
+		  </form>
+		</div>
+	  </div>
+	</div>
+
+	<footer class="footer text-faded text-center py-0">
+    <div class="container">
+      <p class="m-0 small">Hak Cipta &copy; 2020 Eternity Esports | Dirancang oleh <a href="https://github.com/stanleyowen" target="_blank" rel="noopener noreferrer">Stanley Owen</a></p>
+    </div>
+  </footer>
+
+  <script src="/assets/vendor/jquery/jquery.min.js?v=2026.11"></script>
+  <script src="/assets/vendor/bootstrap3/js/bootstrap.min.js?v=2026.11"></script>
+  <script src="/assets/js/app.js?v=2026.11"></script>
+</body>
+</html>
