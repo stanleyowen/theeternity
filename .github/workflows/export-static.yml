@@ -1,0 +1,49 @@
+# Keeps dist/ (the static site Netlify publishes) in sync with the PHP source.
+# On every push to main that touches the source, render the site again and
+# commit dist/ if it changed; Netlify then deploys that commit automatically.
+name: Export static site
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "dist/**"
+      - "**.md"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: export-static
+  cancel-in-progress: true
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Archive smoke tests
+        run: |
+          docker build -q -t eternity:ci . >/dev/null
+          docker run -d --name eternity-ci -p 127.0.0.1:8080:80 eternity:ci >/dev/null
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:8080/en-us/index.php && break; sleep 1; done
+          python3 tests/smoke_test.py archive http://127.0.0.1:8080
+          docker rm -f eternity-ci >/dev/null
+
+      - name: Render static site
+        run: tools/export-static.sh
+
+      - name: Commit dist/ if it changed
+        run: |
+          if [ -z "$(git status --porcelain -- dist)" ]; then
+            echo "dist/ is up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
+          git add dist
+          git commit -m "Re-export static site for ${GITHUB_SHA::7}"
+          git push

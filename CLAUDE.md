@@ -35,8 +35,10 @@ docker run --rm -v "$PWD":/app -w /app php:8.5-apache sh -c 'for f in $(find . -
   seed changes need a rebuild.
 - **Static deploy (Netlify):** `tools/export-static.sh` runs the image with `STATIC_EXPORT=true` and crawls it
   with `tools/export_static.py` into `dist/` (committed; `netlify.toml` publishes it with no build step).
-  `dist/` is generated output: never edit it by hand, and re-run the export after changing pages, CSS/JS or seed
-  data. The exporter exits non-zero on dead links, unmapped URLs or PHP warnings. New pages are picked up only if
+  `dist/` is generated output: never edit it by hand. On push to `main`, `.github/workflows/export-static.yml`
+  runs the archive smoke tests, re-exports, and commits `dist/`; Netlify (linked to the repo, site
+  `eternity-esports`, domain eternity.stanleyowen.com) deploys it. Exports must stay deterministic (seed uploads
+  use content-hash names), or every run would commit a new `dist/`. The exporter exits non-zero on dead links, unmapped URLs or PHP warnings. New pages are picked up only if
   something links to them (or they are added to `SEEDS` in the exporter).
 - `STATIC_EXPORT` only changes a few helpers (`csrf_field()`, `logout_url()`, `demo_access_panel()`, `body_attrs()`)
   and lets `demo-login.php` accept GET for the exporter. Keep it off on any server reachable from outside.

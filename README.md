@@ -103,10 +103,12 @@ publishes ports around `ufw`, so a `0.0.0.0` binding would expose the app direct
 Because the archive is read-only, every page can be rendered once and published as plain files. Nothing runs on the
 server, so there is nothing to patch or attack.
 
-```bash
-tools/export-static.sh     # needs Docker; renders every page (incl. both demo dashboards) into dist/
-git add dist && git commit -m "Re-export static site" && git push
-```
+Publishing is automatic. On every push to `main`:
+1. The GitHub Action `.github/workflows/export-static.yml` runs the archive smoke tests.
+2. It renders the site with `tools/export-static.sh` and commits `dist/` if anything changed.
+3. Netlify, linked to this repo, deploys that commit to **https://eternity.stanleyowen.com**.
+
+To preview locally: `tools/export-static.sh` (needs Docker), then open `dist/` with any static file server.
 
 `netlify.toml` publishes `dist/` with no build step. In the static build:
 - "View as Player / Administrator" link to pre-rendered dashboards.
@@ -114,7 +116,6 @@ git add dist && git commit -m "Re-export static site" && git push
 - Query-string pages become separate files (`edit-alert-id.php?id=1` → `edit-alert-id-1.html`).
 - Old `.php` URLs redirect via `_redirects`, and the PHP app's security headers are carried over in `_headers`.
 
-**Re-run the export after any change to pages, styles or seed data.** `dist/` is not updated automatically.
 
 ### Live (writable) mode
 

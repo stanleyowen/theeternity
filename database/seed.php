@@ -69,7 +69,8 @@ $eventId = (int) $pdo->lastInsertId();
 $demoLogo = null;
 $source = APP_ROOT . '/assets/img/etr-img-1.jpeg';
 if (is_file($source)) {
-    $demoLogo = bin2hex(random_bytes(16)) . '.jpg';
+    // Deterministic names keep static exports reproducible (real uploads still get random names).
+    $demoLogo = substr(hash('sha256', 'logo-squad:' . hash_file('sha256', $source)), 0, 32) . '.jpg';
     copy($source, upload_dir('logo-squad') . '/' . $demoLogo);
 }
 
@@ -103,7 +104,7 @@ foreach ($present as [$name, $date]) {
 
 /* ---- Gallery --------------------------------------------------------------- */
 if (is_file($source)) {
-    $galleryName = bin2hex(random_bytes(16)) . '.jpg';
+    $galleryName = substr(hash('sha256', 'gallery:' . hash_file('sha256', $source)), 0, 32) . '.jpg';
     copy($source, upload_dir('gallery') . '/' . $galleryName);
     db_query('INSERT INTO gallery (file_name, uploaded_on) VALUES (?, ?)', [$galleryName, '2020-09-08 07:40:00']);
 }
